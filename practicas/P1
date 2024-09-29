@@ -1,0 +1,82 @@
+CREATE TABLE medico(
+medico_id int PRIMARY KEY,
+direccion varchar(250),
+cargo varchar(50),
+especialidad varchar(50),
+contraseña varchar(16),
+horaEntrada time,
+horaSalida time,
+Nombre varchar(20),
+primerApellido varchar(20),
+segundoApellido varchar(20)
+);
+
+CREATE TABLE paciente(
+paciente_id int PRIMARY KEY,
+fechaNaci date,
+Nombre varchar(20),
+primerApellido varchar(20),
+segundoApellido varchar(20)
+
+);
+
+CREATE TABLE consultorio(
+codigo int,
+area varchar(100),
+descripcion varchar(500)
+);
+
+
+--Me falto poner el primary key
+ALTER TABLE medico
+ADD PRIMARY KEY (id);
+
+ALTER TABLE paciente
+ADD PRIMARY KEY (id);
+-- Cambio el nombre de las columnas para diferenciar las PRIMARY DE LAS FORENAS
+ALTER TABLE paciente
+RENAME column id to paciente_id;
+
+ALTER TABLE medico
+RENAME column id to medico_id;
+
+-- AGREGAR LA LLAVE FORANEA A LA TABLA PACIENTES
+-- ADD CONSTRAINT nombre_llave_foranea FOREIGN KEY (nombre_columna_en_mi_tabla) REFERENCES nombre_otra_tabla(nombre_columna_en_otra_tabla);
+-- añado la columna 
+ALTER TABLE paciente
+ADD column id_medico int;
+-- describo que la columan es una llave foranea que e sun allave primaria de otro lado en mi tabla
+-- Cuida la sintaxis de los () que si los reocnoce 
+ALTER TABLE paciente
+ADD CONSTRAINT fk_id_medico FOREIGN KEY (id_medico) REFERENCES medico(medico_id);
+
+-- Creo la entidad debil historial medico
+-- sql no deferencia entre fuerte y debil, pero la regla es : Si es debil entonces si o si debe tener una 
+-- llave foranea
+
+CREATE TABLE historial_medico(
+receta varchar(300),
+fecha_de_consulta date
+);
+
+-- Se me olvido poner desde el principio la llave fornea, tons agrego aqui
+ALTER TABLE historial_medicox
+ADD COLUMN paciente_id int;
+
+ALTER TABLE historial_medico
+ADD CONSTRAINT fk_id_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(paciente_id);
+
+-- Añadir la columna a consultorio para poder crear despue el forein key
+ALTER TABLE consultorio 
+ADD column id_medico int;
+
+-- Crear el foreing key
+ALTER TABLE consultorio
+ADD CONSTRAINT fk_id_medico FOREIGN KEY (id_medico) REFERENCES medico(medico_id);
+
+-- Añadir la primery key a consultorio 
+ALTER TABLE consultorio 
+ADD PRIMARY KEY(codigo)
+
+
+-- Por Said Carbot-ESCOM-IPN-MEX
