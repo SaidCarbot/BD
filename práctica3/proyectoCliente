@@ -1,0 +1,175 @@
+CREATE DATABASE practica3
+
+CREATE TABLE cliente(
+codigo_cliente int PRIMARY KEY,
+telefono int,
+domicilio varchar(200),
+razonSocial varchar(50)
+);
+
+CREATE TABLE proyecto(
+codigo_proyecto int PRIMARY KEY,
+cuantia int,
+descripcion varchar(200),
+fechaDeInicio date,
+fechaDeFin date,
+codigo_cliente int);
+-- No puedo crear la foreing key al mismo tiempo que creo la tabla, tiene qu ser secuencial. 
+alter table proyecto ADD CONSTRAINT fk_codigo_cliente
+FOREIGN KEY (codigo_cliente) REFERENCES cliente(codigo_cliente);
+
+CREATE TABLE colaborador(
+NIF int PRIMARY KEY,
+nombre varchar(100),
+domicilio varchar(100),
+telefono int,
+banco varchar(50),
+NodeCuenta int
+);
+
+CREATE TABLE pago(
+NodePago int,
+concepto varchar(100),
+cantidad int
+);
+
+ALTER TABLE pago
+ADD PRIMARY KEY(NodePago);
+
+CREATE TABLE tipoDePago(
+codigoTipoDePago int PRIMARY KEY,
+descripcion varchar(500),
+codigoPago int
+);
+
+ALTER TABLE tipoDePago ADD CONSTRAINT fk_codigo_pago
+FOREIGN KEY (codigoPago) REFERENCES pago(NodePago);
+
+CREATE TABLE colaboradorPago(
+NIF_colaboradorPago int,
+pago_colaborarPago int,
+fechaDePago date
+);
+
+ALTER TABLE colaboradorPago ADD CONSTRAINT fk_NIF_colaboradorPago
+FOREIGN KEY (NIF_colaboradorPago) REFERENCES colaborador(NIF);
+
+ALTER TABLE colaboradorPago ADD CONSTRAINT fk_pago_colaborarPago
+FOREIGN KEY (pago_colaborarPago) REFERENCES pago(NoDePago);
+
+CREATE TABLE proyectoColaborador(
+codigoProyectoColaborador int,
+NIFProyectoColaborador int
+);
+
+ALTER TABLE proyectoColaborador ADD CONSTRAINT fk_codigoProyectoColaborador
+FOREIGN KEY (codigoProyectoColaborador) REFERENCES proyecto(codigo_proyecto);
+
+ALTER TABLE proyectoColaborador ADD CONSTRAINT fk_NIFProyectoColaborador
+FOREIGN KEY (NIFProyectoColaborador) REFERENCES colaborador(NIF);
+
+-- A cada tabla ponerle 5 registros
+-- Tengo 5 tabals con id primario, entocnes imagino que si meto en esas 
+--Crear secuencias para poder meter los id sin que sea todo manual 
+CREATE SEQUENCE secCliente start with 1 increment by 1 maxvalue 10;
+CREATE SEQUENCE secProyecto START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE secColaborador START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE secPago START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE secTipoDePago START WITH 1 INCREMENT BY 1;
+--cliente,proyecto,colaborador, pago,tipodepago
+
+-- Modificar las tabla spara que tomen la secuencia ciempre
+ALTER TABLE cliente
+ALTER COLUMN codigo_cliente SET DEFAULT NEXTVAL('secCliente');
+
+ALTER TABLE proyecto
+ALTER COLUMN codigo_proyecto SET DEFAULT NEXTVAL('secProyecto');
+
+ALTER TABLE colaborador
+ALTER COLUMN nif SET DEFAULT NEXTVAL('secColaborador');
+
+ALTER TABLE pago
+ALTER COLUMN nodepago SET DEFAULT NEXTVAL('secPago');
+
+ALTER TABLE tipodepago
+ALTER COLUMN codigotipodepago SET DEFAULT NEXTVAL('secTipoDePago');
+
+--cliente,proyecto,colaborador, pago,tipodepago
+
+-- A) tabla clientes: codigo_cliente,telefono,domicilio,razonSocial
+INSERT INTO cliente (telefono, domicilio, razonSocial)
+VALUES ('0000000001', 'Calle privada', 'Sin Actividad empresarial');
+
+
+INSERT INTO cliente (telefono, domicilio, razonSocial)
+VALUES 
+	('0000000002', 'Calle publica', 'REPECO'),
+	('0000000003', 'Calle cerrda', 'SA'),
+	('0000000004', 'Calle abierta', 'SA de CV'),
+	('0000000005', 'Calle avenida', 'Moral')
+;
+
+-- B) tabla proyecto: cuenta, descripcion,fechadeinicio,fechadefin
+INSERT INTO proyecto (descripcion,fechadeinicio,fechadefin)
+VALUES --dates yyyy-mm-dd
+('Es padre','2024-1-1','2024-2-1'),
+('Es divertido','2024-2-1','2024-4-1'),
+('Es gracioso','2024-3-1','2024-4-1'),
+('Es entretenido','2024-4-1','2024-5-1'),
+('Es pasable','2024-5-1','2024-6-1')
+;-- este ya quedo con los is 6,7,8,9 porque la cree asi y noi encuentor como actualziadlor a 1,2,3,4
+
+--cliente,proyecto,colaborador, pago,tipodepago
+-- C) tabla colaborador: nombre,domicilio,telefono,banco,nodecuenta
+INSERT INTO colaborador (nombre,domicilio,telefono,banco,nodecuenta)
+VALUES
+('Said','Calle sin numero','1111111','BANAMEX','12345'),
+('Carbot','Calle con numero','333333','BBV','23456'),
+('Cruz','Calle con o sin numero','444444','BANORTE','34567'),
+('Trejo','Calle abierta','555555','AMEX','45678'),
+('Trejo','Calle cerrada','666666','BANAMEX1','56789')
+;
+
+-- D) tabla pago:concepto,cantidad
+INSERT INTO pago (concepto,cantidad)
+VALUES
+('Viaticos','100'),
+('Comida','200'),
+('Autos','300'),
+('Software','400'),
+('Licencias','500')
+;
+
+-- E) tabla tipode pago:descripcion,codigopago
+INSERT INTO tipodepago (descripcion,codigopago)
+VALUES
+('TC','1'),
+('TC','2'),
+('ApplePay','3'),
+('GooglePay','4'),
+('Efec','5')
+;
+
+-- F) tabla proyecto colaborador:codigoproyectocolaborador,nifproyectocolaborador
+INSERT INTO proyectocolaborador (codigoproyectocolaborador,nifproyectocolaborador)
+VALUES
+('6','3'),
+('7','2'),--aqui como no movi las pk de proyecto entonces deben eer 6,7,8,9,10
+('8','1'),
+('9','4'),
+('10','5')
+;
+
+-- G) tabla colaborador pago: nif_colaboradorpago,pago_colaborarpago,fechadepago
+INSERT INTO colaboradorpago (nif_colaboradorpago,pago_colaborarpago,fechadepago)
+VALUES
+('1','1','2024-1-1'),
+('2','2','2024-1-1'),
+('3','3','2024-1-1'),
+('4','4','2024-1-1'),
+('5','5','2024-1-1')
+;
+
+
+-- Hasta aquí la s6 tablas tienen 5 registros, y a las que usan fk les mande pk de otras tablas
+-- 14 octubre de 2024, Said Carbot Cruz Trejo, ESCOM-IPN-MEX
